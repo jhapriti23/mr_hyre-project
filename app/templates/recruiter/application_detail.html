@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Application Details{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('recruiter.view_job', job_id=application.job.id) }}" class="text-decoration-none">
+        <i class="bi bi-arrow-left me-1"></i> Back to {{ application.job.title }}
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm text-center p-4">
+            <div class="match-circle mx-auto mb-3 {% if application.match_score >= 70 %}match-high{% elif application.match_score >= 40 %}match-mid{% else %}match-low{% endif %}">
+                <span class="display-6 fw-bold">{{ application.match_score|round(1) }}%</span>
+                <small class="d-block">Match Score</small>
+            </div>
+            <h4 class="fw-bold">{{ application.candidate.full_name }}</h4>
+            <p class="text-muted mb-1">{{ application.candidate.email }}</p>
+            {% if application.candidate.phone %}
+            <p class="text-muted small">{{ application.candidate.phone }}</p>
+            {% endif %}
+            <span class="badge bg-secondary">{{ application.status|title }}</span>
+            <form method="POST" action="{{ url_for('recruiter.update_application_status', job_id=application.job.id, app_id=application.id) }}" class="mt-3">
+                {{ status_form.hidden_tag() }}
+                {{ status_form.status(class="form-select mb-2") }}
+                {{ status_form.submit(class="btn btn-primary btn-sm w-100") }}
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        {% if application.match_analysis %}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="fw-bold"><i class="bi bi-stars me-1 text-primary"></i> AI Match Analysis</h5>
+                <p class="text-muted mb-0">{{ application.match_analysis }}</p>
+            </div>
+        </div>
+        {% endif %}
+        <div class="row g-3 mb-4">
+            {% if application.strengths_list %}
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100 border-start border-success border-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold text-success">Strengths</h6>
+                        <ul class="mb-0 small">
+                            {% for s in application.strengths_list %}
+                            <li>{{ s }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% if application.gaps_list %}
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100 border-start border-warning border-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold text-warning">Gaps</h6>
+                        <ul class="mb-0 small">
+                            {% for g in application.gaps_list %}
+                            <li>{{ g }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% if application.candidate.resume %}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="fw-bold">Resume Summary</h5>
+                {% if application.candidate.resume.parsed_summary %}
+                <p class="text-muted">{{ application.candidate.resume.parsed_summary }}</p>
+                {% endif %}
+                {% if application.candidate.resume.skills_list %}
+                <h6>Skills</h6>
+                {% for skill in application.candidate.resume.skills_list %}
+                <span class="badge bg-light text-dark border me-1 mb-1">{{ skill }}</span>
+                {% endfor %}
+                {% endif %}
+                {% if application.candidate.resume.parsed_experience %}
+                <h6 class="mt-3">Experience</h6>
+                <p class="text-muted small" style="white-space: pre-line;">{{ application.candidate.resume.parsed_experience[:800] }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        {% if application.cover_letter %}
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="fw-bold">Cover Letter</h5>
+                <p class="text-muted" style="white-space: pre-line;">{{ application.cover_letter }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

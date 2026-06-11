@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Recruiter Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h2 class="fw-bold mb-0">Recruiter Dashboard</h2>
+        <p class="text-muted mb-0">Welcome back, {{ current_user.full_name }}</p>
+    </div>
+    <a href="{{ url_for('recruiter.create_job') }}" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-1"></i> Post New Job
+    </a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md">
+        <div class="stat-card p-3 rounded-4 text-center">
+            <h3 class="fw-bold text-primary mb-0">{{ stats.total_jobs }}</h3>
+            <small class="text-muted">Total Jobs</small>
+        </div>
+    </div>
+    <div class="col-6 col-md">
+        <div class="stat-card p-3 rounded-4 text-center">
+            <h3 class="fw-bold text-success mb-0">{{ stats.open_jobs }}</h3>
+            <small class="text-muted">Open Jobs</small>
+        </div>
+    </div>
+    <div class="col-6 col-md">
+        <div class="stat-card p-3 rounded-4 text-center">
+            <h3 class="fw-bold text-info mb-0">{{ stats.total_applications }}</h3>
+            <small class="text-muted">Applications</small>
+        </div>
+    </div>
+    <div class="col-6 col-md">
+        <div class="stat-card p-3 rounded-4 text-center">
+            <h3 class="fw-bold text-warning mb-0">{{ stats.shortlisted }}</h3>
+            <small class="text-muted">Shortlisted</small>
+        </div>
+    </div>
+    <div class="col-6 col-md">
+        <div class="stat-card p-3 rounded-4 text-center">
+            <h3 class="fw-bold text-danger mb-0">{{ stats.avg_match }}%</h3>
+            <small class="text-muted">Avg Match</small>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 pt-3">
+                <h5 class="fw-bold mb-0">Your Job Postings</h5>
+            </div>
+            <div class="card-body p-0">
+                {% if jobs %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Title</th>
+                                <th>Status</th>
+                                <th>Applications</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for job in jobs %}
+                            <tr>
+                                <td>
+                                    <strong>{{ job.title }}</strong><br>
+                                    <small class="text-muted">{{ job.company }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge {% if job.status == 'open' %}bg-success{% else %}bg-secondary{% endif %}">
+                                        {{ job.status|title }}
+                                    </span>
+                                </td>
+                                <td>{{ job.applications.count() }}</td>
+                                <td>
+                                    <a href="{{ url_for('recruiter.view_job', job_id=job.id) }}" class="btn btn-sm btn-outline-primary">Manage</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <p class="text-muted">No jobs posted yet.</p>
+                    <a href="{{ url_for('recruiter.create_job') }}" class="btn btn-primary btn-sm">Post Your First Job</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 pt-3">
+                <h5 class="fw-bold mb-0">Recent Applications</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_applications %}
+                    {% for app in recent_applications %}
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-3 {% if not loop.last %}border-bottom{% endif %}">
+                        <div>
+                            <strong>{{ app.candidate.full_name }}</strong>
+                            <br><small class="text-muted">{{ app.job.title }}</small>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge score-badge score-{{ 'high' if app.match_score >= 70 else ('mid' if app.match_score >= 40 else 'low') }}">
+                                {{ app.match_score|round(1) }}%
+                            </span>
+                            <br><a href="{{ url_for('recruiter.view_application', app_id=app.id) }}" class="small">View</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <p class="text-muted mb-0">No applications yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

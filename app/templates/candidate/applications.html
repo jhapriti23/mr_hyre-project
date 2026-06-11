@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}My Applications{% endblock %}
+
+{% block content %}
+<h2 class="fw-bold mb-4">My Applications</h2>
+{% if applications %}
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Job</th>
+                    <th>Company</th>
+                    <th>Match Score</th>
+                    <th>Status</th>
+                    <th>Applied</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in applications %}
+                <tr>
+                    <td><strong>{{ app.job.title }}</strong></td>
+                    <td>{{ app.job.company }}</td>
+                    <td>
+                        <span class="badge score-badge score-{{ 'high' if app.match_score >= 70 else ('mid' if app.match_score >= 40 else 'low') }}">
+                            {{ app.match_score|round(1) }}%
+                        </span>
+                    </td>
+                    <td><span class="badge bg-secondary">{{ app.status|title }}</span></td>
+                    <td><small class="text-muted">{{ app.applied_at.strftime('%b %d, %Y') }}</small></td>
+                    <td>
+                        <a href="{{ url_for('candidate.application_detail', app_id=app.id) }}" class="btn btn-sm btn-outline-primary">View</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="text-center py-5">
+    <p class="text-muted">No applications yet.</p>
+    <a href="{{ url_for('candidate.browse_jobs') }}" class="btn btn-primary">Browse Jobs</a>
+</div>
+{% endif %}
+{% endblock %}

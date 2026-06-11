@@ -1,0 +1,93 @@
+:root {
+    --primary-gradient: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f9fa;
+}
+
+main {
+    flex: 1;
+}
+
+.hero-section {
+    background: var(--primary-gradient);
+}
+
+.feature-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+}
+
+.stat-card {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.job-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.job-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+}
+
+.score-badge.score-high {
+    background-color: #d1e7dd !important;
+    color: #0f5132 !important;
+}
+
+.score-badge.score-mid {
+    background-color: #fff3cd !important;
+    color: #664d03 !important;
+}
+
+.score-badge.score-low {
+    background-color: #f8d7da !important;
+    color: #842029 !important;
+}
+
+.match-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.match-high {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.match-mid {
+    background: #fff3cd;
+    color: #664d03;
+}
+
+.match-low {
+    background: #f8d7da;
+    color: #842029;
+}
+
+.navbar-brand {
+    letter-spacing: -0.5px;
+}
+
+@media (max-width: 576px) {
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+}

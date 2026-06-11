@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Application Details{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('candidate.dashboard') }}" class="text-decoration-none">
+        <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm text-center p-4">
+            <div class="match-circle mx-auto mb-3 {% if application.match_score >= 70 %}match-high{% elif application.match_score >= 40 %}match-mid{% else %}match-low{% endif %}">
+                <span class="display-6 fw-bold">{{ application.match_score|round(1) }}%</span>
+                <small class="d-block">AI Match Score</small>
+            </div>
+            <h5 class="fw-bold">{{ application.job.title }}</h5>
+            <p class="text-muted">{{ application.job.company }}</p>
+            <span class="badge bg-secondary">{{ application.status|title }}</span>
+            <p class="text-muted small mt-3 mb-0">Applied {{ application.applied_at.strftime('%b %d, %Y') }}</p>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        {% if application.match_analysis %}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="fw-bold"><i class="bi bi-stars me-1 text-primary"></i> Match Analysis</h5>
+                <p class="text-muted mb-0">{{ application.match_analysis }}</p>
+            </div>
+        </div>
+        {% endif %}
+        <div class="row g-3 mb-4">
+            {% if application.strengths_list %}
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100 border-start border-success border-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold text-success">Your Strengths</h6>
+                        <ul class="mb-0 small">
+                            {% for s in application.strengths_list %}
+                            <li>{{ s }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% if application.gaps_list %}
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100 border-start border-warning border-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold text-warning">Areas to Improve</h6>
+                        <ul class="mb-0 small">
+                            {% for g in application.gaps_list %}
+                            <li>{{ g }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% if application.cover_letter %}
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="fw-bold">Cover Letter</h5>
+                <p class="text-muted" style="white-space: pre-line;">{{ application.cover_letter }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

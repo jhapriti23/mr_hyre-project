@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Candidate Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h2 class="fw-bold mb-0">Candidate Dashboard</h2>
+        <p class="text-muted mb-0">Welcome, {{ current_user.full_name }}</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('candidate.resume') }}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-file-earmark-person me-1"></i> My Resume
+        </a>
+        <a href="{{ url_for('candidate.browse_jobs') }}" class="btn btn-primary btn-sm">Find Jobs</a>
+    </div>
+</div>
+
+{% if not resume %}
+<div class="alert alert-warning">
+    <i class="bi bi-exclamation-triangle me-1"></i>
+    Upload your resume to apply for jobs and get AI-powered match scores.
+    <a href="{{ url_for('candidate.resume') }}" class="alert-link">Upload now</a>
+</div>
+{% endif %}
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-card p-3 rounded-4 text-center">
+            <h3 class="fw-bold text-primary mb-0">{{ stats.total_applications }}</h3>
+            <small class="text-muted">Applications</small>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card p-3 rounded-4 text-center">
+            <h3 class="fw-bold text-success mb-0">{{ stats.shortlisted }}</h3>
+            <small class="text-muted">Shortlisted</small>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card p-3 rounded-4 text-center">
+            <h3 class="fw-bold text-info mb-0">{{ stats.avg_match }}%</h3>
+            <small class="text-muted">Avg Match</small>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card p-3 rounded-4 text-center">
+            <h3 class="fw-bold text-warning mb-0">{{ stats.open_jobs }}</h3>
+            <small class="text-muted">Open Jobs</small>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-0 pt-3 d-flex justify-content-between">
+        <h5 class="fw-bold mb-0">My Applications</h5>
+        <a href="{{ url_for('candidate.applications') }}" class="btn btn-sm btn-outline-primary">View All</a>
+    </div>
+    <div class="card-body p-0">
+        {% if applications %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Job</th>
+                        <th>Company</th>
+                        <th>Match</th>
+                        <th>Status</th>
+                        <th>Applied</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in applications[:10] %}
+                    <tr>
+                        <td><strong>{{ app.job.title }}</strong></td>
+                        <td>{{ app.job.company }}</td>
+                        <td>
+                            <span class="badge score-badge score-{{ 'high' if app.match_score >= 70 else ('mid' if app.match_score >= 40 else 'low') }}">
+                                {{ app.match_score|round(1) }}%
+                            </span>
+                        </td>
+                        <td><span class="badge bg-secondary">{{ app.status|title }}</span></td>
+                        <td><small class="text-muted">{{ app.applied_at.strftime('%b %d, %Y') }}</small></td>
+                        <td>
+                            <a href="{{ url_for('candidate.application_detail', app_id=app.id) }}" class="btn btn-sm btn-outline-primary">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <p class="text-muted">You haven't applied to any jobs yet.</p>
+            <a href="{{ url_for('candidate.browse_jobs') }}" class="btn btn-primary btn-sm">Browse Jobs</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

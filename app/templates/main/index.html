@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<section class="hero-section text-white rounded-4 p-5 mb-5">
+    <div class="row align-items-center">
+        <div class="col-lg-7">
+            <h1 class="display-4 fw-bold mb-3">Hire Smarter with AI</h1>
+            <p class="lead mb-4">
+                {{ app_name }} uses Google Gemini AI to analyze jobs, parse resumes,
+                and rank candidates — so recruiters find the best talent faster.
+            </p>
+            <div class="d-flex flex-wrap gap-3">
+                <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg">Get Started</a>
+                <a href="{{ url_for('main.jobs_list') }}" class="btn btn-outline-light btn-lg">Browse Jobs</a>
+            </div>
+        </div>
+        <div class="col-lg-5 d-none d-lg-block text-center">
+            <i class="bi bi-robot display-1 opacity-75"></i>
+        </div>
+    </div>
+</section>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm feature-card">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon bg-primary-subtle text-primary mb-3">
+                    <i class="bi bi-file-earmark-text"></i>
+                </div>
+                <h5>Resume Parsing</h5>
+                <p class="text-muted mb-0">Upload PDF or DOCX resumes. AI extracts skills, experience, and contact info automatically.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm feature-card">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon bg-success-subtle text-success mb-3">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+                <h5>AI Job Analysis</h5>
+                <p class="text-muted mb-0">Job postings are analyzed to extract required skills and experience levels instantly.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm feature-card">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon bg-warning-subtle text-warning mb-3">
+                    <i class="bi bi-people"></i>
+                </div>
+                <h5>Smart Matching</h5>
+                <p class="text-muted mb-0">Candidates are scored and ranked against job requirements using AI-powered matching.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-5">
+    <div class="col-md-4">
+        <div class="stat-card text-center p-4 rounded-4">
+            <h2 class="fw-bold text-primary mb-0">{{ stats.open_jobs }}</h2>
+            <p class="text-muted mb-0">Open Positions</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card text-center p-4 rounded-4">
+            <h2 class="fw-bold text-success mb-0">{{ stats.total_jobs }}</h2>
+            <p class="text-muted mb-0">Total Jobs Posted</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card text-center p-4 rounded-4">
+            <h2 class="fw-bold text-warning mb-0"><i class="bi bi-stars"></i></h2>
+            <p class="text-muted mb-0">Powered by Gemini AI</p>
+        </div>
+    </div>
+</div>
+
+{% if recent_jobs %}
+<section>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold mb-0">Latest Opportunities</h3>
+        <a href="{{ url_for('main.jobs_list') }}" class="btn btn-outline-primary btn-sm">View All</a>
+    </div>
+    <div class="row g-4">
+        {% for job in recent_jobs %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm job-card">
+                <div class="card-body">
+                    <span class="badge bg-primary-subtle text-primary mb-2">{{ job.employment_type }}</span>
+                    <h5 class="card-title">{{ job.title }}</h5>
+                    <p class="text-muted small mb-2">
+                        <i class="bi bi-building me-1"></i>{{ job.company }}
+                        {% if job.location %}<span class="ms-2"><i class="bi bi-geo-alt me-1"></i>{{ job.location }}</span>{% endif %}
+                    </p>
+                    <p class="card-text text-muted small">{{ job.description[:120] }}...</p>
+                </div>
+                <div class="card-footer bg-transparent border-0 pb-3">
+                    <a href="{{ url_for('main.job_detail', job_id=job.id) }}" class="btn btn-primary btn-sm">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}My Resume{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h4 class="fw-bold mb-3">Upload Resume</h4>
+                <p class="text-muted small">Supported formats: PDF, DOCX, DOC, TXT (max 16 MB)</p>
+                <form method="POST" enctype="multipart/form-data" novalidate>
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.resume(class="form-control" + (" is-invalid" if form.resume.errors else "")) }}
+                        {% for error in form.resume.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+                    </div>
+                    {{ form.submit(class="btn btn-primary w-100") }}
+                </form>
+                <div class="alert alert-info small mt-3 mb-0">
+                    <i class="bi bi-stars me-1"></i> Your resume will be parsed by Gemini AI to extract skills and experience.
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        {% if resume %}
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h4 class="fw-bold mb-0">Parsed Resume</h4>
+                    <span class="badge bg-success">Uploaded</span>
+                </div>
+                <p class="text-muted small mb-3">
+                    <i class="bi bi-file-earmark me-1"></i>{{ resume.original_filename }}
+                    · {{ resume.uploaded_at.strftime('%b %d, %Y') }}
+                </p>
+                {% if resume.parsed_name or resume.parsed_email %}
+                <div class="row mb-3">
+                    {% if resume.parsed_name %}
+                    <div class="col-md-6"><strong>Name:</strong> {{ resume.parsed_name }}</div>
+                    {% endif %}
+                    {% if resume.parsed_email %}
+                    <div class="col-md-6"><strong>Email:</strong> {{ resume.parsed_email }}</div>
+                    {% endif %}
+                    {% if resume.parsed_phone %}
+                    <div class="col-md-6"><strong>Phone:</strong> {{ resume.parsed_phone }}</div>
+                    {% endif %}
+                </div>
+                {% endif %}
+                {% if resume.parsed_summary or resume.ai_summary %}
+                <h6>Summary</h6>
+                <p class="text-muted">{{ resume.parsed_summary or resume.ai_summary }}</p>
+                {% endif %}
+                {% if resume.skills_list %}
+                <h6>Skills</h6>
+                <div class="mb-3">
+                    {% for skill in resume.skills_list %}
+                    <span class="badge bg-primary-subtle text-primary me-1 mb-1">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if resume.parsed_experience %}
+                <h6>Experience</h6>
+                <p class="text-muted small" style="white-space: pre-line;">{{ resume.parsed_experience[:1000] }}</p>
+                {% endif %}
+                {% if resume.parsed_education %}
+                <h6>Education</h6>
+                <p class="text-muted small">{{ resume.parsed_education }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-file-earmark-person display-1 text-muted"></i>
+                <p class="text-muted mt-3">No resume uploaded yet.</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
